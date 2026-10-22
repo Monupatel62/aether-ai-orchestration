@@ -57,14 +57,14 @@ Single authoritative durable run/step state machine, state transition rules, out
 
 ## Data and queue ownership gate
 
-See [Data Infrastructure Evaluation](../DATA_INFRASTRUCTURE_EVALUATION.md). Orchestration owns durable run/step state, lease/heartbeat, approval state, recovery and terminal status. A queue transports wake-up/job messages but is not the source of truth. Design for at-least-once delivery, idempotency keys, outbox/inbox consistency, bounded retries and reconciliation after crashes. BullMQ is the initial candidate to test; NATS JetStream remains an option only if replay or independent event consumers are required. Do not claim exactly-once side effects based on broker semantics alone.
+See [Data Infrastructure Evaluation](https://github.com/Monupatel62/aether-ai-platform/blob/main/docs/DATA_INFRASTRUCTURE_EVALUATION.md). Orchestration owns durable run/step state, lease/heartbeat, approval state, recovery and terminal status. A queue transports wake-up/job messages but is not the source of truth. Design for at-least-once delivery, idempotency keys, outbox/inbox consistency, bounded retries and reconciliation after crashes. BullMQ is the initial candidate to test; NATS JetStream remains an option only if replay or independent event consumers are required. Do not claim exactly-once side effects based on broker semantics alone.
 
 ## Related documentation
 
-- [Master catalog](../REPOSITORY_CATALOG.md)
-- [Architecture](../MASTER_ARCHITECTURE.md)
-- [Implementation roadmap](../IMPLEMENTATION_ROADMAP.md)
-- [Decision log](../DECISION_LOG.md)
+- [Master catalog](https://github.com/Monupatel62/aether-ai-platform/blob/main/docs/REPOSITORY_CATALOG.md)
+- [Architecture](https://github.com/Monupatel62/aether-ai-platform/blob/main/docs/MASTER_ARCHITECTURE.md)
+- [Implementation roadmap](https://github.com/Monupatel62/aether-ai-platform/blob/main/docs/IMPLEMENTATION_ROADMAP.md)
+- [Decision log](https://github.com/Monupatel62/aether-ai-platform/blob/main/docs/DECISION_LOG.md)
 
 ## Research references
 
