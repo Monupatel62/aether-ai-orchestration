@@ -1,0 +1,76 @@
+# Repository specification: aether-ai-orchestration
+
+**Status:** Documentation baseline copied from the Aether AI master specification. Implementation status must be verified separately.
+
+## Mission
+
+Durable job and workflow execution coordination: run state, step transitions, retries, cancellation, concurrency, recovery.
+
+## Responsibility boundary
+
+Owns execution state machine and idempotency; no provider-specific logic or tool implementation.
+
+## Dependencies and connections
+
+Versioned workflow schema/validation contract; agent runtime contract; neutral queue contract; database persistence tooling/contracts; security policy contract; observability interface. Workflow schema code and queue implementation must not import orchestration.
+
+## Owned capabilities
+
+Single authoritative durable run/step state machine, state transition rules, outbox/idempotency, queue delivery assumptions, lease/recovery semantics, cancellation contract and reconciliation after crashes. API submits durable work through this repository; the API must not create a second durable execution state machine.
+
+## Must not own
+
+- Responsibilities explicitly assigned to another repository in the master catalog.
+- Product UI, provider secrets, or privileged actions outside this repository's boundary.
+- Unreviewed direct database access into another component's private schema.
+- Unversioned cross-repository APIs or hidden side effects.
+
+## Required public contracts
+
+- A typed/versioned interface with documented inputs, outputs, error cases, limits, and compatibility policy.
+- Explicit auth/tenant context where data or actions are user-scoped.
+- Correlation/run identifiers and structured, redacted lifecycle events.
+- Timeouts, retry behavior, cancellation, idempotency, and partial-failure semantics where applicable.
+
+## Security and privacy
+
+- Treat model output, external APIs, uploaded content, workflow definitions, and MCP responses as untrusted.
+- Enforce least privilege and tenant isolation at every data/tool boundary.
+- Keep credentials server-side and use the approved secret mechanism; never log tokens or raw secrets.
+- Define retention, deletion, payload limits, and redaction before persisting prompts, files, or run results.
+
+## Test plan
+
+- Unit tests for domain rules and input validation.
+- Contract tests for every direct upstream dependency.
+- Negative tests for unauthorized access, malformed inputs, excessive payloads, and missing capabilities.
+- Failure tests for timeouts, dependency outages, retries, duplicate requests, and cancellation.
+- Integration/smoke test in a non-production environment before release.
+
+## Implementation gates
+
+1. Finish documentation and resolve open ADRs.
+2. Pin and license-check every dependency and selected upstream version.
+3. Implement a minimum vertical slice only within this repository's boundary.
+4. Add tests, observability, security checks, and operational instructions with the implementation.
+5. Update this specification and the master catalog in the same change when contracts or ownership change.
+
+## Data and queue ownership gate
+
+See [Data Infrastructure Evaluation](../DATA_INFRASTRUCTURE_EVALUATION.md). Orchestration owns durable run/step state, lease/heartbeat, approval state, recovery and terminal status. A queue transports wake-up/job messages but is not the source of truth. Design for at-least-once delivery, idempotency keys, outbox/inbox consistency, bounded retries and reconciliation after crashes. BullMQ is the initial candidate to test; NATS JetStream remains an option only if replay or independent event consumers are required. Do not claim exactly-once side effects based on broker semantics alone.
+
+## Related documentation
+
+- [Master catalog](../REPOSITORY_CATALOG.md)
+- [Architecture](../MASTER_ARCHITECTURE.md)
+- [Implementation roadmap](../IMPLEMENTATION_ROADMAP.md)
+- [Decision log](../DECISION_LOG.md)
+
+## Research references
+
+- [WoHo AI DevKit](https://github.com/Monupatel62/woho-ai-devkit) — separate project; verify package APIs/version before integration.
+- [AI DIAL Core](https://github.com/epam/ai-dial-core) — model gateway reference; repository includes Apache-2.0 LICENSE.
+- [AI DIAL Chat](https://github.com/epam/ai-dial-chat) — modular UI/BFF reference; check file-level license notices before reuse.
+- [AI DIAL documentation](https://github.com/epam/ai-dial) and [MCP specification](https://modelcontextprotocol.io/) where relevant.
+
+These are design references, not a statement that their code has been copied or that all components share one license.
