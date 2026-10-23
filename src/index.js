@@ -27,7 +27,7 @@ function validRun(run) {
  * Persistence must use compare-and-swap on version; this pure helper does not
  * provide durable storage, distributed locking, or queue delivery guarantees.
  */
-export function applyRunCommand(runInput, commandInput) {
+export function applyRunCommand(runInput, commandInput, { trustedSystem = false } = {}) {
   if (!validRun(runInput)) throw new RunStateError("invalid_run", "Run snapshot is invalid");
   if (!isRecord(commandInput) || !validId(commandInput.type)) throw new RunStateError("invalid_command", "Run command is invalid");
   const command = commandInput.type;
@@ -35,7 +35,8 @@ export function applyRunCommand(runInput, commandInput) {
   if (!Number.isSafeInteger(expectedVersion) || expectedVersion < 1) throw new RunStateError("invalid_version", "Expected version is required");
   if (expectedVersion !== runInput.version) throw new RunStateError("version_conflict", "Run version changed; reload before retrying");
   if (!Number.isSafeInteger(commandInput.at) || commandInput.at < 0) throw new RunStateError("invalid_timestamp", "Command timestamp is invalid");
-  if (commandInput.actorId !== runInput.ownerId && commandInput.system !== true) {
+  if (commandInput.system === true && trustedSystem !== true) throw new RunStateError("forbidden", "System authority must come from a trusted server context");
+  if (commandInput.actorId !== runInput.ownerId && !(commandInput.system === true && trustedSystem === true)) {
     throw new RunStateError("forbidden", "Actor is not permitted to mutate this run");
   }
 
@@ -72,7 +73,7 @@ export function applyRunCommand(runInput, commandInput) {
     from: runInput.status,
     to: target,
     version: run.version,
-    actorId: commandInput.system === true ? "system" : commandInput.actorId,
+    actorId: commandInput.system === true && trustedSystem === true ? "system" : commandInput.actorId,
     at: commandInput.at,
   });
   return Object.freeze({ run, event, idempotent: false });
