@@ -1,0 +1,10 @@
+{
+  "name": "@aether-ai/orchestration",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Deterministic run lifecycle state machine for Aether AI orchestration.",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "exports": { ".": "./src/index.js" },
+  "scripts": { "test": "node --test", "check": "node --check src/index.js && node --check test/orchestration.test.js" }
+}
