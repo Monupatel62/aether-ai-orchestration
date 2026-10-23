@@ -30,3 +30,14 @@ For each future change, record: date; exact files; why the change is needed; alt
 - Reviewed official MCP 2026-07-28 release notes, OWASP GenAI 2026 Top 10 announcement, OpenTelemetry GenAI conventions, GitHub Actions secure-use guidance, and AI DIAL Core documentation.
 - Master audit and threat model are linked from the platform repository.
 - No application code, production config, or security implementation was added; these are design requirements, not claims of implemented controls.
+
+
+## 2026-10-23 — Contract ownership and architecture alignment
+
+- Updated `docs/ARCHITECTURE.md` and `README.md` to clarify that Orchestration is the single owner of durable run/step state, scheduling, cancellation, lease/fencing, recovery, and uncertain-side-effect reconciliation.
+- Clarified that workflow definitions and static graph validation are owned by Workflows, agent execution behavior by Agents, queue messages are wake-up/transport signals, and database tooling supplies persistence primitives rather than owning run-state semantics.
+- Added explicit fail-closed, reauthorization, idempotency, stale-worker, terminal-state, and no-blind-replay invariants to the architecture narrative.
+- Preserved unresolved choices: ADR-0021 membership authority, queue/database vendor, lease/retry/retention values, exact package/API/event edges, and deployment topology remain unapproved.
+- Verification: edited files were fetched back from this branch; CI is not configured for documentation-only changes and no runtime tests are claimed.
+- Security/privacy impact: clarifies trust boundaries and avoids implying that queued tenant/principal metadata or publish-time validation is authorization.
+- Follow-up: review against the durable run-state and recovery contract PR, then keep that contract and dependency matrix aligned before any implementation gate is approved.
