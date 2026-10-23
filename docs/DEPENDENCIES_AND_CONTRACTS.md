@@ -4,11 +4,18 @@
 
 ## Contract area
 
-Durable run state machine, queue event envelope, step lease, cancellation and retry contract
+Durable run state machine, queue event envelope, step lease, cancellation and retry contract.
 
-## Direct dependencies
+## Direct dependency contracts
 
-workflows, agents, queue, database, observability.
+- `aether-ai-workflows`: versioned workflow definition and validation contract only; orchestration owns scheduling and execution.
+- `aether-ai-agents`: versioned agent execution contract; agents do not depend on orchestration.
+- `aether-ai-queue`: neutral versioned envelope and delivery/lease semantics; queue must not import orchestration.
+- `aether-ai-database`: public persistence/tooling contracts only; do not couple orchestration to private database implementation internals.
+- `aether-ai-security`: shared policy/security contract for authorizing run and step actions.
+- `aether-ai-observability`: low-level telemetry interfaces; observability must not import orchestration.
+
+These are intended contract relationships, not proof that each dependency is a package import or separate runtime service. The edge type must be recorded explicitly in the master dependency matrix before implementation.
 
 ## Required rules
 
@@ -31,5 +38,5 @@ Define run/step states, versioned event schema, idempotency, duplicate delivery,
 - [ ] Authentication, authorization, and tenant boundary defined.
 - [ ] Retries, cancellation, duplicate requests, and side effects defined.
 - [ ] Correlation IDs and redaction rules defined.
-- [ ] Unit and contract tests planned.
-- [ ] Direct and transitive dependency licenses checked before reuse.
+- [ ] Unit and integration tests cover success and failure cases.
+- [ ] Rollout, rollback, and compatibility plan documented.
