@@ -1,39 +1,23 @@
 # aether-ai-orchestration
 
-> **Status: Documentation phase.** No application code or production deployment has been started in this repository.
+**Status:** Initial deterministic run state machine implemented on a feature branch. Durable orchestration is not implemented.
 
-## Purpose
+## Implemented
 
-Coordinates jobs, workflow steps, agent runs, retries, cancellation, concurrency, and recovery.
+- [State machine](src/index.js): explicit run transitions, owner/system command context, version compare checks, terminal-state immutability, cancellation acknowledgment and safe terminal race handling.
+- [Unit tests](test/orchestration.test.js): normal transitions, cancellation, stale versions, unauthorized actors, invalid transitions, terminal states, and idempotent cancellation.
+- Dependency-free Node.js package with Node 20/22 CI.
 
-## Responsibility boundary
+## Important limitations
 
-Execution coordination and durable state transitions; not a model provider.
-
-## Dependencies
-
-aether-ai-workflows, aether-ai-agents, aether-ai-queue, aether-ai-database, aether-ai-observability.
-
-## Project rules
-
-- No implementation starts until the documentation and cross-repository contracts are reviewed.
-- Do not commit secrets, API keys, user data, or production credentials.
-- Public interfaces, security decisions, and non-obvious implementation choices must be documented.
+This is a pure state-transition helper. It does not persist runs, provide distributed compare-and-swap, schedule queue jobs, implement outbox/inbox delivery, execute agent steps, or recover after crashes. Production integration must enforce actor identity at the calling boundary and persist transitions atomically with version checks; the caller must not allow clients to set trusted system-command fields.
 
 ## Documentation
 
+- [Repository specification](docs/REPOSITORY_SPECIFICATION.md)
 - [Project specification](docs/PROJECT_SPEC.md)
-- [Architecture and connections](docs/ARCHITECTURE.md)
+- [Architecture](docs/ARCHITECTURE.md)
 - [Dependencies and contracts](docs/DEPENDENCIES_AND_CONTRACTS.md)
-- [Implementation plan and acceptance criteria](docs/IMPLEMENTATION_PLAN.md)
-- [Research and license notes](docs/RESEARCH_AND_LICENSES.md)
-- [Repository-specific technical design and test plan](docs/TECHNICAL_DESIGN.md)
-- [Repository-specific security review checklist](docs/SECURITY_REVIEW.md)
-- [Engineering and commenting standard](docs/ENGINEERING_STANDARD.md)
-- [Work log and decisions](docs/WORKLOG.md)
-- [Master 33-repository catalog](https://github.com/Monupatel62/aether-ai-platform/blob/main/docs/REPOSITORY_CATALOG.md)
-- [Continuity handoff for new chats](https://github.com/Monupatel62/aether-ai-platform/blob/main/docs/WORK_HANDOFF.md)
-
-## Before coding
-
-Read the project specification, architecture, contracts, implementation plan, and work log. Update the docs in the same change whenever behavior, an API contract, a dependency, or a security boundary changes.
+- [Implementation plan](docs/IMPLEMENTATION_PLAN.md)
+- [Security review](docs/SECURITY_REVIEW.md)
+- [Master catalog](https://github.com/Monupatel62/aether-ai-platform/blob/main/docs/REPOSITORY_CATALOG.md)
