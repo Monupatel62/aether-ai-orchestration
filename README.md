@@ -1,6 +1,6 @@
 # aether-ai-orchestration
 
-> **Status: Documentation phase.** No application code or production deployment has been started in this repository.
+> **Status: Initial pure run-state transition validator is in review.** No durable orchestration runtime or production deployment is implemented.
 
 ## Purpose
 
@@ -19,6 +19,10 @@ aether-ai-workflows, aether-ai-agents, aether-ai-queue, aether-ai-database, aeth
 - No implementation starts until the documentation and cross-repository contracts are reviewed.
 - Do not commit secrets, API keys, user data, or production credentials.
 - Public interfaces, security decisions, and non-obvious implementation choices must be documented.
+
+## Initial implementation
+
+The draft package models allowed run lifecycle transitions, explicit approval pause/resume events, bounded retry attempts, and optimistic version checks. It is a pure decision helper only: it does not persist state, enforce leases, authorize users, provide exactly-once delivery, recover crashes, or make tool side effects idempotent. The state model remains subject to the orchestration ADRs.
 
 ## Documentation
 
