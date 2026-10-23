@@ -43,3 +43,10 @@ test("validates run snapshots and commands", () => {
   assert.throws(() => applyRunCommand({ ...run, status: "unknown" }, command("start")), RunStateError);
   assert.throws(() => applyRunCommand(run, command("start", { at: -1 })), RunStateError);
 });
+
+
+test("does not trust a caller-supplied system flag without server authority", () => {
+  assert.throws(() => applyRunCommand(run, command("start", { actorId: "system-user", system: true })), (e) => e.code === "forbidden");
+  const result = applyRunCommand(run, command("start", { actorId: "system-user", system: true }), { trustedSystem: true });
+  assert.equal(result.event.actorId, "system");
+});
